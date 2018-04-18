@@ -4,6 +4,7 @@
 #include<algorithm>
 #include<sstream>
 #include<cstring>
+#include<strstream>
 using namespace netCDF;
 NETCDF::NETCDF()
 {
@@ -13,9 +14,9 @@ NETCDF::NETCDF()
 void NETCDF::open(const std::string& filename, const char* flags)//r read w readwrite c creat
 {
     //如果文件已经打开要先关闭
-    if(!file->isNull())
+    if(this->filename.length()!=0&& !file->isNull())
     {
-        file->close();
+       // file->close();
         this->filename.clear();
     }
     try
@@ -37,7 +38,7 @@ void NETCDF::open(const std::string& filename, const char* flags)//r read w read
     }catch(exceptions::NcException e)
     {
         e.what();
-        file->close();
+     //   file->close();
         file=NULL;
     }
     this->flags=flags[0];
@@ -273,7 +274,7 @@ void NETCDF::creatVar(const std::string& var,struct Data * d)//自己写一般�
                 NcDim tmp=file->addDim(d->coordName[i],d->dims[i]);
                 filedims.push_back(tmp);
                 dims.push_back(tmp);
-                break;
+                continue;
             }
        
         
@@ -295,7 +296,7 @@ void NETCDF::creatVar(const std::string& var,struct Data * d)//自己写一般�
         std::cout<<"unknown type"<<std::endl;
         return;
     }
-    data.putVar((void *)d->data);
+    data.putVar((void*)(d->data));
     fileVars=file->getVars();//刷新var
 }
 
@@ -330,7 +331,7 @@ void NETCDF::setVarAttr(const std::string& var,std::map<std::string,std::string>
 
 void NETCDF::close()
 {
-    file->close();
+ //   file->close();
 }
 NETCDF::~NETCDF()
 {
